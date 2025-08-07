@@ -51,7 +51,7 @@ export default function EventRegistrationForm() {
         from_email: formData.email,
         phone: formData.phone,
         additional_info: formData.additionalInfo || 'None provided',
-        to_name: 'Event Organizer',
+        to_name: 'Event Organizerr',
         message: `
           New Event Registration:
           
