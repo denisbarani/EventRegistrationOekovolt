@@ -30,7 +30,7 @@ export default function EventRegistrationForm() {
   // Initialize EmailJS
   useEffect(() => {
     emailjs.init(
-      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "VtHAmcrL_HSci02if"
+      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
     );
   }, []);
 
@@ -78,21 +78,21 @@ export default function EventRegistrationForm() {
 
       // Send email using EmailJS
       const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_h6oi7tm",
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_wd85mvo",
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_z66u8je",
         templateParams,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "VtHAmcrL_HSci02if"
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
       );
 
       await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_h6oi7tm",
-        process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || "template_7yn7bzm",
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
+        process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || "template_tc49w1o",
         {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email, 
           title: "Veranstaltungsanmeldung",
         },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "VtHAmcrL_HSci02if"
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
       );
 
       if (result.status === 200) {
