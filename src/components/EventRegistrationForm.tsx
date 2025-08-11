@@ -5,6 +5,7 @@ import Logo from "../assets/Logo.png";
 import Image from "next/image";
 import emailjs from "@emailjs/browser";
 import { User, Mail, Phone } from "lucide-react";
+import { title } from "process";
 
 interface FormData {
   firstName: string;
@@ -53,7 +54,8 @@ export default function EventRegistrationForm() {
     setSubmitError(null);
 
     try {
-      const result = await emailjs.send(
+      // 1. Send main email to organizer
+      const organizerResult = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_z66u8je",
         {
@@ -63,13 +65,36 @@ export default function EventRegistrationForm() {
           additional_info: formData.additionalInfo || "Keine Angabe",
           timestamp: new Date().toLocaleString("de-DE"),
           to_name: "Veranstaltungsorganisator",
-          reply_to: formData.email, // Important for auto-reply
-          title: "Veranstaltungsanmeldung" // Needed for auto-reply template
+          message: `
+          Neue Veranstaltungsanmeldung:
+          
+          Name: ${formData.firstName} ${formData.lastName}
+          Email: ${formData.email}
+          Telefon: ${formData.phone}
+          Zusätzliche Informationen: ${formData.additionalInfo || "Keine Angabe"}
+          
+          Eingereicht am: ${new Date().toLocaleString()}
+        `,
         },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
       );
 
-      if (result.status === 200) {
+      // 2. Send auto-reply to user
+      const autoReplyResult = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_h6mdh8f",
+        {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          title: "Anmeldung zur Veranstaltung",
+          contact_email: "events@oekovolt.de",
+          phone: formData.phone,
+          date: new Date().toLocaleDateString("de-DE")
+        },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
+      );
+
+      if (organizerResult.status === 200 && autoReplyResult.status === 200) {
         setSubmitSuccess(true);
         setTimeout(() => {
           setSubmitSuccess(false);
@@ -81,10 +106,14 @@ export default function EventRegistrationForm() {
             additionalInfo: "",
           });
         }, 3000);
+      } else {
+        throw new Error("Failed to send one or more emails");
       }
     } catch (error) {
       console.error("EmailJS Error:", error);
-      setSubmitError("Die Anmeldung konnte nicht gesendet werden.");
+      setSubmitError(
+        "Die Anmeldung konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+      );
     } finally {
       setIsSubmitting(false);
     }
