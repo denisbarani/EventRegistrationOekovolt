@@ -53,52 +53,24 @@ export default function EventRegistrationForm() {
     setSubmitError(null);
 
     try {
-      const templateParams = {
-        from_name: `${formData.firstName} ${formData.lastName}`,
-        from_email: formData.email,
-        phone: formData.phone,
-        debug: true,
-        additional_info: formData.additionalInfo || "Keine Angabe",
-        timestamp: new Date().toLocaleString("de-DE"),
-
-        to_name: "Veranstaltungsorganisator",
-        message: `
-          Neue Veranstaltungsanmeldung:
-          
-          Name: ${formData.firstName} ${formData.lastName}
-          Email: ${formData.email}
-          Telefon: ${formData.phone}
-          Zusätzliche Informationen: ${formData.additionalInfo || "Keine Angabe"
-          }
-          
-          Eingereicht am: ${new Date().toLocaleString()}
-        `,
-      };
-      // console.log("Sending with params:", templateParams);
-
-      // Send email using EmailJS
       const result = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_z66u8je",
-        templateParams,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
-      );
-
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_houg0kd",
-        process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || "template_tc49w1o",
         {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email, 
-          title: "Veranstaltungsanmeldung",
+          from_name: `${formData.firstName} ${formData.lastName}`,
+          from_email: formData.email,
+          phone: formData.phone,
+          additional_info: formData.additionalInfo || "Keine Angabe",
+          timestamp: new Date().toLocaleString("de-DE"),
+          to_name: "Veranstaltungsorganisator",
+          reply_to: formData.email, // Important for auto-reply
+          title: "Veranstaltungsanmeldung" // Needed for auto-reply template
         },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "edOWlmtUHbwfNMh66"
       );
 
       if (result.status === 200) {
         setSubmitSuccess(true);
-
-        // Reset form after 3 seconds
         setTimeout(() => {
           setSubmitSuccess(false);
           setFormData({
@@ -109,14 +81,10 @@ export default function EventRegistrationForm() {
             additionalInfo: "",
           });
         }, 3000);
-      } else {
-        throw new Error("Failed to send email");
       }
     } catch (error) {
       console.error("EmailJS Error:", error);
-      setSubmitError(
-        "Die Anmeldung konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
-      );
+      setSubmitError("Die Anmeldung konnte nicht gesendet werden.");
     } finally {
       setIsSubmitting(false);
     }
