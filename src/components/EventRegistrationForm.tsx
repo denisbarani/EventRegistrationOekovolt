@@ -164,12 +164,12 @@ export default function EventRegistrationForm() {
               />
             </div>
 
-            <div className="text-center">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 text-[#669933] leading-tight">
-                Veranstaltungsanmeldung
+            <div className="text-center space-y-1">
+              <h1 className="text-base sm:text-xl md:text-xl lg:text-2xl font-bold mb-1text-gray-900 leading-tight">
+                Einladung zum Tag der offenen Tür
               </h1>
-              <p className="text-gray-600 text-sm sm:text-sm lg:text-base font-medium">
-                Nehmen Sie an unserer exklusiven Veranstaltung teil
+              <p className="text-[#669933] text-base sm:text-xl md:text-xl lg:text-2xl font-bold">
+                15 Jahre <span className="text-[#003473] font-bold">ÖKOVOLT</span>
               </p>
             </div>
           </div>
